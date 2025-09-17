@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portafolio - Izan Torres</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ----- Reset y base ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    html, body {
+      height: 100%;
+      color: white;
+    }
+
+    /* IMPORTANT: estado bloqueado (no permitir scroll en la intro) */
+    body.locked {
+      overflow: hidden;        /* bloquea scroll */
+      touch-action: none;      /* evita scroll táctil */
+      -webkit-overflow-scrolling: auto;
+    }
+
+    /* Fondo dinámico */
+    body {
+      background: radial-gradient(circle at center, #ff4d4d, #b30000);
+      background-size: 200% 200%;
+      transition: background-position 0.1s ease;
+      overflow-x: hidden; /* mantiene lo que tenías */
+    }
+
+    /* Pantalla inicial */
+    .intro {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .intro h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      transition: transform 0.3s ease;
+    }
+    .intro h1:hover {
+      transform: scale(1.1);
+    }
+    .intro h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-top: 0.5rem;
+      opacity: 0.9;
+    }
+    .intro button {
+      margin-top: 2rem;
+      padding: 0.8rem 2rem;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 2rem;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .intro button:hover {
+      background: rgba(255,255,255,0.4);
+      transform: scale(1.05);
+    }
+
+    /* Página principal oculta al inicio */
+    .main {
+      display: none;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Contenido flexible */
+    .content {
+      flex: 1;
+    }
+
+    /* Cabezal */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.6);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    header h1:hover {
+      transform: scale(1.1);
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    nav a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      padding: 0.6rem 1rem;
+      border-radius: 0.6rem;
+      transition: all 0.28s cubic-bezier(.25,.8,.25,1);
+    }
+    nav a:hover {
+      color: #ffd6d6;
+      transform: scale(1.03);
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 4px 10px rgba(82, 80, 80, 0.322);
+      backdrop-filter: blur(4px);
+    }
+
+    /* Dropdown Trabajos */
+    .dropdown {
+      position: relative;
+    }
+    .dropdown-menu {
+      position: absolute;
+      top: 120%;
+      right: 0;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 1rem;
+      padding: 0.5rem 0;
+      display: none;
+      flex-direction: column;
+      min-width: 150px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s ease forwards;
+    }
+    .dropdown-menu a {
+      padding: 0.7rem 1rem;
+      color: white;
+      transition: background 0.3s ease;
+    }
+    .dropdown-menu a:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .dropdown:hover .dropdown-menu {
+      display: flex;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Contenido páginas */
+    .page {
+      display: none;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    .page.active {
+      display: block;
+    }
+    .page h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .page p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255,255,255,0.4);
+    }
+
+    /* Si quieres que el footer no quede en mitad cuando la página es corta,
+       dejamos espacio en main usando padding-bottom (ya hecho si hace falta). */
+  </style>
+</head>
+<!-- AÑADO la clase "locked" inicialmente para evitar scroll en la intro -->
+<body class="locked">
+  <!-- Pantalla de bienvenida -->
+  <div class="intro" id="intro">
+    <h1>Hola,</h1>
+    <h2>este es mi portafolio</h2>
+    <button onclick="enterSite()">Entrar</button>
+  </div>
+
+  <!-- Página principal -->
+  <div class="main" id="main" aria-hidden="true">
+    <header>
+      <h1 onclick="goHome()">Portafolio</h1>
+      <nav>
+        <a href="#" onclick="showPage('sobre-mi')">Sobre mí</a>
+        <a href="#" onclick="showPage('contacto')">Contacto</a>
+        <div class="dropdown">
+          <a href="#">Trabajos ▾</a>
+          <div class="dropdown-menu">
+            <a href="#" onclick="showPage('webs')">Páginas web</a>
+            <a href="#" onclick="showPage('disenos')">Diseños</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Contenedor de páginas -->
+    <div class="content">
+      <div class="page" id="sobre-mi">
+        <h2>Sobre mí</h2>
+        <p>Soy Izan Torres, programador y diseñador. Joven, atento y servicial, siempre en busca de nuevos retos creativos.</p>
+      </div>
+
+      <div class="page" id="contacto">
+        <h2>Contacto</h2>
+        <p>Aún no está disponible</p>
+      </div>
+
+      <div class="page" id="webs">
+        <h2>Páginas web</h2>
+        <p>Aún no disponible</p>
+      </div>
+
+      <div class="page" id="disenos">
+        <h2>Diseños</h2>
+        <p>Aún no disponible</p>
+      </div>
+    </div>
+
+    <!-- Footer solo en main -->
+    <footer>
+      © 2025 Izan Torres. Todos los derechos reservados.
+    </footer>
+  </div>
+
+  <script>
+    // Fondo animado con el mouse (sin cambios)
+    document.addEventListener('mousemove', e => {
+      const x = e.clientX / window.innerWidth * 100;
+      const y = e.clientY / window.innerHeight * 100;
+      document.body.style.backgroundPosition = `${x}% ${y}%`;
+    });
+
+    // Evita scroll con rueda/touch mientras body tiene la clase 'locked'
+    // (añadido como redundancia por si algún navegador ignora overflow:hidden)
+    function blockScrollWhileLocked(e) {
+      if (document.body.classList.contains('locked')) {
+        e.preventDefault();
+      }
+    }
+    // listeners no-passive para poder preventDefault
+    window.addEventListener('wheel', blockScrollWhileLocked, { passive: false });
+    window.addEventListener('touchmove', blockScrollWhileLocked, { passive: false });
+
+    // Entrar a la página: quita bloqueo de scroll y muestra main
+    function enterSite() {
+      document.body.classList.remove('locked'); // permite scroll
+      document.getElementById('intro').style.display = 'none';
+      const main = document.getElementById('main');
+      main.style.display = 'flex';
+      main.removeAttribute('aria-hidden');
+      // asegurar que la ventana empiece en top al mostrar main
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    // Volver a la página principal (Portafolio) — deja main visible pero sin páginas activas
+    function goHome() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    }
+
+    // Mostrar una página concreta dentro de main
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      // asegurar que el contenido se muestre desde arriba
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
